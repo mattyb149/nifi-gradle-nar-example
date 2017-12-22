@@ -1,8 +1,8 @@
 
 description = ''
 dependencies {
-    compile 'org.codehaus.groovy:groovy-all:2.4.12'
-    compile group: 'org.apache.nifi', name: 'nifi-utils', version:'1.5.0-SNAPSHOT'
-    testCompile group: 'org.apache.nifi', name: 'nifi-mock', version:'1.5.0-SNAPSHOT'
-    compileOnly group: 'org.apache.nifi', name: 'nifi-api', version:'1.5.0-SNAPSHOT'
+    compile localGroovy()
+    compile group: 'org.apache.nifi', name: 'nifi-utils', version: project.version
+    testCompile group: 'org.apache.nifi', name: 'nifi-mock', version: project.version
+    compileOnly group: 'org.apache.nifi', name: 'nifi-api', version: project.version
 }
