@@ -1,0 +1,15 @@
+
+description = ''
+dependencies {
+  /*compile(group: 'org.apache.nifi', name: 'nifi-standard-services-api-nar', version: '1.5.0-SNAPSHOT') {
+      artifact {
+          name = 'nifi-standard-services-api-nar'
+          type = 'nar'
+      }
+  }*/
+  compile project(':nifi-gradle-built-example-processors')
+}
+
+task makeNar(type: Jar) {
+    jar.extension = 'nar'
+}

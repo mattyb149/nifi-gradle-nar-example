@@ -1,0 +1,6 @@
+rootProject.name = 'nifi-gradle-built-example'
+include ':nifi-gradle-built-example-processors'
+include ':nifi-gradle-built-example-nar'
+
+project(':nifi-gradle-built-example-processors').projectDir = "$rootDir/nifi-gradle-built-example-processors" as File
+project(':nifi-gradle-built-example-nar').projectDir = "$rootDir/nifi-gradle-built-example-nar" as File
