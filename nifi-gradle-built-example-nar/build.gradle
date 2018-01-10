@@ -1,49 +1,56 @@
-description = 'An example project on how to use Gradle to build NiFi ARchive projects (NARs)'
-
-// Populate these if your NAR has a parent NAR
-def narDependencyGroup = 'org.apache.nifi'
-def narParentName = 'nifi-standard-services-api-nar'
-def narParentVersion = project.version
-
-dependencies {
-    apiElements(group: narDependencyGroup, name: narParentName, version: narParentVersion) {
-        artifact {
-            name = narParentName
-            type = 'nar'
-        }
-    }
-    compile project(':nifi-gradle-built-example-processors')
+plugins {
+    id 'org.ajoberstar.grgit' version '2.1.0'
 }
 
+description = 'An example project on how to use Gradle to build NiFi ARchive projects (NARs)'
+
+final String BUILD_TIMESTAMP_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+
+// Populate this if your NAR has a parent NAR
+def parentNar = null
+        //[group  : 'org.apache.nifi', name   : 'nifi-standard-services-api-nar', version: project.version ]
+
 jar {
+    dependsOn ':nifi-gradle-built-example-processors:jar'
     jar.extension = 'nar'
+
+    into('META-INF/bundled-dependencies') {
+        from project(':nifi-gradle-built-example-processors').configurations.compile
+        from project(':nifi-gradle-built-example-processors').tasks['jar'].archivePath
+    }
+
     manifest {
-        attributes(
-                'Build-Revision': getWorkingRevision() ?: 'unknown',
-                'Build-Branch': getWorkingBranch() ?: 'unknown',
-                'Build-Tag': getWorkingTag(),
-                'Build-Timestamp': new Date().toString(),
-                'Built-By': System.properties['user.name'] ?: 'unknown',
-                'Nar-Dependency-Group': narDependencyGroup,
-                'Nar-Parent-Id': narParentName,
-                'Nar-Parent-Version': narParentVersion,
-                'Created-By': "Gradle ${gradle.gradleVersion}",
-                'Build-Jdk': "Groovy ${GroovySystem.version}"
-        )
+        def defaultAttrs = [
+                'Build-Revision'                     : getWorkingRevision() ?: 'unknown',
+                'Build-Branch'                       : getWorkingBranch() ?: 'unknown',
+                'Build-Tag'                          : getWorkingTag(),
+                'Build-Timestamp'                    : new Date().format(BUILD_TIMESTAMP_FORMAT),
+                'Built-By'                           : System.properties['user.name'] ?: 'unknown',
+                'Nar-Id'                             : project.name,
+                'Nar-Version'                        : project.version,
+                'Clone-During-Instance-Class-Loading': false,
+                'Created-By'                         : "Gradle ${gradle.gradleVersion}",
+                'Build-Jdk'                          : "Groovy ${GroovySystem.version}"
+        ]
+        if (parentNar) {
+            defaultAttrs += [
+                    'Nar-Dependency-Group'  : parentNar.group,
+                    'Nar-Dependency-Id'     : parentNar.name,
+                    'Nar-Dependency-Version': parentNar.version
+            ]
+        }
+        attributes(defaultAttrs)
     }
 }
 
 def getWorkingBranch() {
-    return "git rev-parse --abbrev-ref HEAD".execute().text.trim()
+    grgit.branch.getCurrent().name
 }
 
 def getWorkingRevision() {
-    return "git rev-parse HEAD".execute().text.trim()
+    grgit.head().id
 }
 
 def getWorkingTag() {
-    def workingTag = "git describe"
-    def result = workingTag.execute()
-    def resultText = result.text
-    return (result.exitValue() == 0) ? resultText.trim() : 'HEAD'
+    grgit.tag.list()[0] ?: 'HEAD'
 }

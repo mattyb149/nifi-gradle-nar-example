@@ -1,8 +1,18 @@
+plugins {
 
-description = ''
+}
+description = 'This is my custom processor'
+
 dependencies {
+
     compile localGroovy()
     compile group: 'org.apache.nifi', name: 'nifi-utils', version: project.version
     testCompile group: 'org.apache.nifi', name: 'nifi-mock', version: project.version
     compileOnly group: 'org.apache.nifi', name: 'nifi-api', version: project.version
+    // Additional dependencies here
+
+    testCompile group: 'junit', name: 'junit', version:'4.12'
+    testCompile group: 'org.mockito', name: 'mockito-core', version:'1.10.19'
+    testCompile group: 'org.slf4j', name: 'slf4j-simple', version:'1.7.25'
+    // Additional test dependencies here
 }

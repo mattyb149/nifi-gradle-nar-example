@@ -17,7 +17,6 @@
 package org.apache.nifi.processors.example
 
 import org.apache.nifi.components.PropertyDescriptor
-import org.apache.nifi.flowfile.FlowFile
 import org.apache.nifi.annotation.behavior.ReadsAttribute
 import org.apache.nifi.annotation.behavior.ReadsAttributes
 import org.apache.nifi.annotation.behavior.WritesAttribute
@@ -34,11 +33,12 @@ import org.apache.nifi.processor.ProcessorInitializationContext
 import org.apache.nifi.processor.Relationship
 import org.apache.nifi.processor.util.StandardValidators
 
+
 @Tags(["example"])
 @CapabilityDescription("Provide a description")
 @SeeAlso([])
-@ReadsAttributes([@ReadsAttribute(attribute="", description="")])
-@WritesAttributes([@WritesAttribute(attribute="", description="")])
+@ReadsAttributes([@ReadsAttribute(attribute = "", description = "")])
+@WritesAttributes([@WritesAttribute(attribute = "", description = "")])
 class MyProcessor extends AbstractProcessor {
 
     public static final PropertyDescriptor MY_PROPERTY = new PropertyDescriptor.Builder()
@@ -52,11 +52,11 @@ class MyProcessor extends AbstractProcessor {
     public static final Relationship MY_RELATIONSHIP = new Relationship.Builder()
             .name("MY_RELATIONSHIP")
             .description("Example relationship")
-            .build();
+            .build()
 
-    private List<PropertyDescriptor> descriptors;
+    private List<PropertyDescriptor> descriptors
 
-    private Set relationships;
+    private Set relationships
 
     protected void init(final ProcessorInitializationContext context) {
         final List<PropertyDescriptor> descriptors = new ArrayList<PropertyDescriptor>()
@@ -70,24 +70,23 @@ class MyProcessor extends AbstractProcessor {
 
     @Override
     Set<Relationship> getRelationships() {
-        return this.relationships;
+        relationships
     }
 
     @Override
     final List<PropertyDescriptor> getSupportedPropertyDescriptors() {
-        return descriptors;
+        descriptors
     }
 
     @OnScheduled
-    public void onScheduled(final ProcessContext context) {
-
+    void onScheduled(final ProcessContext context) {
     }
 
     @Override
-    public void onTrigger(final ProcessContext context, final ProcessSession session) throws ProcessException {
-        FlowFile flowFile = session.get();
-        if ( flowFile == null ) {
-            return;
+    void onTrigger(final ProcessContext context, final ProcessSession session) throws ProcessException {
+        def flowFile = session.get()
+        if (!flowFile) {
+            return
         }
         // TODO implement
     }
